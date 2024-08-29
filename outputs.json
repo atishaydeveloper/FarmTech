@@ -1,0 +1,234 @@
+{
+    "Apple___Apple_scab": {
+      "disease": "Apple scab",
+      "cause": "Fungal infection caused by Venturia inaequalis.",
+      "prevention": "Use scab-resistant varieties, apply fungicides during the growing season.",
+      "precautions": "Prune and remove fallen leaves and debris to reduce overwintering spores."
+    },
+    "Apple___Black_rot": {
+      "disease": "Black rot",
+      "cause": "Fungal infection caused by Botryosphaeria obtusa.",
+      "prevention": "Remove and destroy infected fruits and leaves, apply fungicides.",
+      "precautions": "Ensure proper air circulation by pruning and spacing trees."
+    },
+    "Apple___Cedar_apple_rust": {
+      "disease": "Cedar apple rust",
+      "cause": "Fungal infection caused by Gymnosporangium juniperi-virginianae.",
+      "prevention": "Use resistant apple varieties, remove nearby juniper trees.",
+      "precautions": "Apply fungicides during the growing season."
+    },
+    "Apple___healthy": {
+      "disease": "Healthy",
+      "cause": "N/A",
+      "prevention": "Maintain good orchard practices.",
+      "precautions": "Regular monitoring and care."
+    },
+    "Blueberry___healthy": {
+      "disease": "Healthy",
+      "cause": "N/A",
+      "prevention": "Ensure proper care and disease management.",
+      "precautions": "Regular monitoring."
+    },
+    "Cherry_(including_sour)___Powdery_mildew": {
+      "disease": "Powdery mildew",
+      "cause": "Fungal infection caused by Podosphaera clandestina.",
+      "prevention": "Apply fungicides, ensure proper spacing and pruning.",
+      "precautions": "Remove infected plant parts."
+    },
+    "Cherry_(including_sour)___healthy": {
+      "disease": "Healthy",
+      "cause": "N/A",
+      "prevention": "Maintain good orchard practices.",
+      "precautions": "Regular monitoring and care."
+    },
+    "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot": {
+      "disease": "Gray leaf spot",
+      "cause": "Fungal infection caused by Cercospora zeae-maydis.",
+      "prevention": "Use resistant hybrids, apply fungicides.",
+      "precautions": "Crop rotation and tillage."
+    },
+    "Corn_(maize)___Common_rust_": {
+      "disease": "Common rust",
+      "cause": "Fungal infection caused by Puccinia sorghi.",
+      "prevention": "Use resistant hybrids, apply fungicides if necessary.",
+      "precautions": "Monitor crop regularly."
+    },
+    "Corn_(maize)___Northern_Leaf_Blight": {
+      "disease": "Northern leaf blight",
+      "cause": "Fungal infection caused by Exserohilum turcicum.",
+      "prevention": "Use resistant hybrids, apply fungicides.",
+      "precautions": "Rotate crops and remove debris."
+    },
+    "Corn_(maize)___healthy": {
+      "disease": "Healthy",
+      "cause": "N/A",
+      "prevention": "Ensure proper care and disease management.",
+      "precautions": "Regular monitoring."
+    },
+    "Grape___Black_rot": {
+      "disease": "Black rot",
+      "cause": "Fungal infection caused by Guignardia bidwellii.",
+      "prevention": "Apply fungicides, remove infected plant parts.",
+      "precautions": "Prune vines for better air circulation."
+    },
+    "Grape___Esca_(Black_Measles)": {
+      "disease": "Esca (Black Measles)",
+      "cause": "Complex of fungal pathogens including Phaeoacremonium and Phaeomoniella.",
+      "prevention": "Avoid wounding vines, apply fungicides.",
+      "precautions": "Remove and destroy infected vines."
+    },
+    "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": {
+      "disease": "Leaf blight (Isariopsis Leaf Spot)",
+      "cause": "Fungal infection caused by Pseudopezicula tracheiphila.",
+      "prevention": "Apply fungicides, maintain proper canopy management.",
+      "precautions": "Remove infected leaves."
+    },
+    "Grape___healthy": {
+      "disease": "Healthy",
+      "cause": "N/A",
+      "prevention": "Maintain good vineyard practices.",
+      "precautions": "Regular monitoring and care."
+    },
+    "Orange___Haunglongbing_(Citrus_greening)": {
+      "disease": "Haunglongbing (Citrus greening)",
+      "cause": "Bacterial infection caused by Candidatus Liberibacter species, spread by psyllid insects.",
+      "prevention": "Control psyllid population, remove and destroy infected trees.",
+      "precautions": "Regular monitoring of citrus trees."
+    },
+    "Peach___Bacterial_spot": {
+      "disease": "Bacterial spot",
+      "cause": "Bacterial infection caused by Xanthomonas campestris pv. pruni.",
+      "prevention": "Use resistant varieties, apply copper-based bactericides.",
+      "precautions": "Avoid overhead watering."
+    },
+    "Peach___healthy": {
+      "disease": "Healthy",
+      "cause": "N/A",
+      "prevention": "Ensure proper care and disease management.",
+      "precautions": "Regular monitoring."
+    },
+    "Pepper,_bell___Bacterial_spot": {
+      "disease": "Bacterial spot",
+      "cause": "Bacterial infection caused by Xanthomonas campestris pv. vesicatoria.",
+      "prevention": "Use resistant varieties, apply copper-based bactericides.",
+      "precautions": "Avoid overhead watering."
+    },
+    "Pepper,_bell___healthy": {
+      "disease": "Healthy",
+      "cause": "N/A",
+      "prevention": "Ensure proper care and disease management.",
+      "precautions": "Regular monitoring."
+    },
+    "Potato___Early_blight": {
+      "disease": "Early blight",
+      "cause": "Fungal infection caused by Alternaria solani.",
+      "prevention": "Use certified seed, apply fungicides.",
+      "precautions": "Crop rotation and remove plant debris."
+    },
+    "Potato___Late_blight": {
+      "disease": "Late blight",
+      "cause": "Fungal infection caused by Phytophthora infestans.",
+      "prevention": "Use resistant varieties, apply fungicides.",
+      "precautions": "Destroy infected plants immediately."
+    },
+    "Potato___healthy": {
+      "disease": "Healthy",
+      "cause": "N/A",
+      "prevention": "Ensure proper care and disease management.",
+      "precautions": "Regular monitoring."
+    },
+    "Raspberry___healthy": {
+      "disease": "Healthy",
+      "cause": "N/A",
+      "prevention": "Ensure proper care and disease management.",
+      "precautions": "Regular monitoring."
+    },
+    "Soybean___healthy": {
+      "disease": "Healthy",
+      "cause": "N/A",
+      "prevention": "Ensure proper care and disease management.",
+      "precautions": "Regular monitoring."
+    },
+    "Squash___Powdery_mildew": {
+      "disease": "Powdery mildew",
+      "cause": "Fungal infection caused by Podosphaera xanthii.",
+      "prevention": "Apply fungicides, ensure proper spacing and sunlight.",
+      "precautions": "Remove infected plant parts."
+    },
+    "Strawberry___Leaf_scorch": {
+      "disease": "Leaf scorch",
+      "cause": "Fungal infection caused by Diplocarpon earlianum.",
+      "prevention": "Apply fungicides, remove infected leaves.",
+      "precautions": "Ensure proper air circulation."
+    },
+    "Strawberry___healthy": {
+      "disease": "Healthy",
+      "cause": "N/A",
+      "prevention": "Ensure proper care and disease management.",
+      "precautions": "Regular monitoring."
+    },
+    "Tomato___Bacterial_spot": {
+      "disease": "Bacterial spot",
+      "cause": "Bacterial infection caused by Xanthomonas campestris pv. vesicatoria.",
+      "prevention": "Use resistant varieties, apply copper-based bactericides.",
+      "precautions": "Avoid overhead watering."
+    },
+    "Tomato___Early_blight": {
+      "disease": "Early blight",
+      "cause": "Fungal infection caused by Alternaria solani.",
+      "prevention": "Use certified seed, apply fungicides.",
+      "precautions": "Crop rotation and remove plant debris."
+    },
+    "Tomato___Late_blight": {
+      "disease": "Late blight",
+      "cause": "Fungal infection caused by Phytophthora infestans.",
+      "prevention": "Use resistant varieties, apply fungicides.",
+      "precautions": "Destroy infected plants immediately."
+    },
+    
+        "Tomato___Leaf_Mold": {
+          "disease": "Leaf Mold",
+          "cause": "Fungus Cladosporium fulvum",
+          "prevention": "Ensure proper air circulation by spacing plants adequately and pruning. Avoid overhead watering to minimize leaf wetness.",
+          "precautions": "Remove infected leaves immediately and use fungicides if necessary."
+        },
+        "Tomato___Septoria_leaf_spot": {
+          "disease": "Septoria Leaf Spot",
+          "cause": "Fungus Septoria lycopersici",
+          "prevention": "Rotate crops, avoid overhead watering, and remove affected leaves to reduce the spread.",
+          "precautions": "Use resistant varieties if available and apply fungicides as needed."
+        },
+        "Tomato___Spider_mites Two-spotted_spider_mite": {
+          "disease": "Spider Mites (Two-spotted)",
+          "cause": "Mites (Tetranychus urticae)",
+          "prevention": "Maintain proper irrigation and use insecticidal soap or neem oil to control mite populations.",
+          "precautions": "Regularly monitor plants for mite infestations and manage weeds around the garden."
+        },
+        "Tomato___Target_Spot": {
+          "disease": "Target Spot",
+          "cause": "Fungus Corynespora cassiicola",
+          "prevention": "Practice crop rotation and avoid overhead irrigation to reduce leaf wetness.",
+          "precautions": "Remove and destroy infected plant debris and use fungicides as necessary."
+        },
+        "Tomato___Tomato_Yellow_Leaf_Curl_Virus": {
+          "disease": "Tomato Yellow Leaf Curl Virus",
+          "cause": "Virus transmitted by whiteflies",
+          "prevention": "Control whitefly populations with insecticides and use resistant varieties.",
+          "precautions": "Remove infected plants to prevent the spread of the virus."
+        },
+        "Tomato___Tomato_mosaic_virus": {
+          "disease": "Tomato Mosaic Virus",
+          "cause": "Virus (Tobacco mosaic virus - TMV)",
+          "prevention": "Use virus-free seeds and avoid smoking near plants. Disinfect tools and wash hands thoroughly before handling plants.",
+          "precautions": "Remove and destroy infected plants immediately."
+        },
+        "Tomato___healthy": {
+          "disease": "Healthy",
+          "cause": "No disease present",
+          "prevention": "Maintain optimal growing conditions and monitor plants regularly.",
+          "precautions": "Continue with standard care practices to ensure plants remain healthy."
+        }
+      
+    
+}
+      
