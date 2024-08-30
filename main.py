@@ -4,6 +4,9 @@ import numpy as np
 import json
 import requests
 import joblib
+import base64
+import pickle
+import pandas as pd
 
 # tensorflow model prediction
 
@@ -57,39 +60,110 @@ def predict_crop(N, P, K, temperature, humidity, ph, rainfall):
     features = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
     prediction = loaded_model.predict(features)
     return prediction[0]
-    
+
+# ricrop setup
+with open('crop_recommendation_model_extended.pkl', 'rb') as file:
+    crop_recommendation_model_extended = pickle.load(file)
+
+with open('yield_prediction_model_extended.pkl', 'rb') as file:
+    yield_prediction_model_extended = pickle.load(file)
+
+df_extended = pd.read_csv('extended_crop_data_30crops.csv')
+
+def recommend_crop(soil_type, climate, region, soil_pH, avg_temp, rainfall, market_demand):
+    prediction = crop_recommendation_model_extended.predict([[soil_type, climate, region, soil_pH, avg_temp, rainfall, market_demand]])
+    return df_extended['recommended_crop'].cat.categories[prediction[0]]
+
+def predict_yield(soil_type, climate, fertilizer_used, irrigation, soil_pH, avg_temp, rainfall, market_demand):
+    prediction = yield_prediction_model_extended.predict([[soil_type, climate, fertilizer_used, irrigation, soil_pH, avg_temp, rainfall, market_demand]])
+    return prediction[0]
+
+# streamlit customization with markdown and css
+
+import streamlit as st
+import base64
+
+# Caching the image loading function
+@st.cache_data
+def get_img_as_base64(file):
+    with open(file, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+# Load the image as base64
+img = get_img_as_base64("finale.jpg")
+img1 = get_img_as_base64("leaf.jpg")
+
+# Create the CSS for the background image
+page_bg_img = f"""
+<style>
+.stApp {{
+    background-image: url("data:image/png;base64,{img}");
+    background-size: 1440px;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: 250% center;
+}}
+[data-testid="stHeader"]{{
+    background-color: rgba(0,0,0,0);
+}}
+[data-testid="stSidebarContent"]{{
+    background-color: #246804;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}}
+</style>
+"""
+
+# Inject the CSS into the Streamlit app
+st.markdown(page_bg_img, unsafe_allow_html=True)
+
 
 # sidebar
 
 st.sidebar.title("Dashboard")
-app_mode = st.sidebar.selectbox("Our Services",["Home","About","Disease Recognition","Crop Recommendation","Weather","Real Time Market"])
+app_mode = st.sidebar.selectbox("Our Services",["Home","About","Disease Recognition","Crop Recommendation","Weather","Real Time Market","Crop Yield"])
 
 # Home Page
 if app_mode == "Home" :
-    st.header("Crop Disease Recognition System")
-    image_path = "home_img.webp"
-    st.image(image_path, use_column_width = True)
+    st.title("FarmTech")
+    image_path = "home.webp"
+    st.image(image_path, width=300)
     st.markdown(""" 
-    Welcome to the Plant Disease Recognition System! 🌿🔍
-    
-    Our mission is to help in identifying plant diseases efficiently. Upload an image of a plant, and our system will analyze it to detect any signs of diseases. Together, let's protect our crops and ensure a healthier harvest!
+    Welcome to FarmTech: Empowering Modern Agriculture
 
-    ### How It Works
-    1. **Upload Image:** Go to the **Disease Recognition** page and upload an image of a plant with suspected diseases.
-    2. **Analysis:** Our system will process the image using advanced algorithms to identify potential diseases.
-    3. **Results:** View the results and recommendations for further action.
+🌱 Your Digital Partner in Crop Management and Disease Prevention 🌱
 
-    ### Why Choose Us?
-    - **Accuracy:** Our system utilizes state-of-the-art machine learning techniques for accurate disease detection.
-    - **User-Friendly:** Simple and intuitive interface for seamless user experience.
-    - **Fast and Efficient:** Receive results in seconds, allowing for quick decision-making.
+Why FarmTech?
+In today’s rapidly changing climate and market conditions, ensuring crop health and maximizing yields have become more challenging than ever. Farmers face constant threats from diseases, unpredictable weather, and fluctuating market prices. FarmTech is here to revolutionize how you manage your farm, combining the power of advanced AI with user-friendly interfaces to offer real-time solutions tailored to your needs.
 
-    ### Get Started
-    Click on the **Disease Recognition** page in the sidebar to upload an image and experience the power of our Plant Disease Recognition System!
+Our Mission
+At FarmTech, our goal is to empower farmers with cutting-edge technology that helps them make informed decisions, protect their crops, and boost their productivity. Whether it's identifying plant diseases, recommending the best crops for your soil, or staying updated with real-time weather and market prices, we’ve got you covered.
 
-    ### About Us
-    Learn more about the project, our team, and our goals on the **About** page.
-    """
+Services We Provide
+🌾 Disease Recognition: Upload an image of your crop, and our AI model will accurately detect any diseases and provide actionable insights to prevent further damage.
+
+🌱 Crop Recommendation: Get tailored crop suggestions based on your soil properties, climate, and local conditions to maximize your yields.
+
+☁️ Weather Updates: Receive real-time weather updates to help you plan your farming activities efficiently and reduce risks due to unexpected weather changes.
+
+📊 Real-Time Market Prices: Stay ahead of the market with live updates on crop prices from across the country, enabling you to make informed selling decisions.
+
+Why You Need FarmTech
+
+Reduce Crop Losses: Early detection of diseases can save up to 50% of your yield from potential losses.
+
+Increase Profitability: Optimizing crop selection and staying updated on market trends can enhance your profit margins significantly.
+
+Save Time and Resources: Automated insights and recommendations save you the hassle of manual research and guesswork.
+
+Make Data-Driven Decisions: Leverage the power of AI and data analytics to drive every aspect of your farming operations with confidence.
+
+
+Get Started Now!
+Click on the Disease Recognition page to upload an image and let our system do the rest. Explore other features via the sidebar to unlock the full potential of your farming with FarmTech."""
     )
     
     #About Project
@@ -240,3 +314,26 @@ elif(app_mode=="Real Time Market"):
     #     print(data)
     # else:
     #     print(f"Failed to fetch data. HTTP Status code: {response.status_code}")
+    
+elif(app_mode == 'Crop Yield'):
+    st.title('Crop Recommendation and Yield Prediction System')
+
+    st.header('Input Parameters')
+    soil_type = st.number_input("Enter the soil type (1, 2, 3):", min_value=1, max_value=3, step=1)
+    climate = st.number_input("Enter the climate type (1, 2, 3):", min_value=1, max_value=3, step=1)
+    region = st.number_input("Enter the region (1, 2):", min_value=1, max_value=2, step=1)
+    fertilizer_used = st.number_input("Enter if fertilizer is used (1 for yes, 0 for no):", min_value=0, max_value=1, step=1)
+    irrigation = st.number_input("Enter if irrigation is used (1 for yes, 0 for no):", min_value=0, max_value=1, step=1)
+    soil_pH = st.number_input("Enter the pH of the soil:", min_value=0.0, max_value=14.0, step=0.1)
+    avg_temp = st.number_input("Enter average temp (°C):", min_value=-50, max_value=50, step=1)
+    rainfall = st.number_input("Enter rainfall (in mm):", min_value=0, max_value=10000, step=1)
+    market_demand = 2  # You can also add input here if needed
+    
+    
+    if st.button('Recommend Crop'):
+        recommended_crop = recommend_crop(soil_type, climate, region, soil_pH, avg_temp, rainfall, market_demand)
+        st.success(f"Recommended Crop based on your inputs: {recommended_crop}")
+
+    if st.button('Predict Yield'):
+        predicted_yield = predict_yield(soil_type, climate, fertilizer_used, irrigation, soil_pH, avg_temp, rainfall, market_demand)
+        st.success(f"Predicted Yield: {predicted_yield:.2f} tons/hectare")
