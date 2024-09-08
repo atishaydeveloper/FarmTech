@@ -9,8 +9,19 @@ import pickle
 import pandas as pd
 import random
 import spacy
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from google.cloud import translate_v2 as translate
+
 
 # tensorflow model prediction
+
+def translate_text(text, target_language):
+    translate_client = translate.Client()
+    result = translate_client.translate(text, target_language=target_language)
+    return result['translatedText']
+
+
 
 def model_prediction(test_image):
     model = tf.keras.models.load_model('final_trained_model.keras')
@@ -132,7 +143,7 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 # sidebar
 
 st.sidebar.title("Dashboard")
-app_mode = st.sidebar.selectbox("Our Services",["Home","About","Disease Recognition","Crop Recommendation","Weather","Crop Yield","Crop Price Prediction","Farm Schemes Recommendation System"])
+app_mode = st.sidebar.selectbox("Our Services",["Home","About","Disease Recognition","Crop Recommendation","Weather","Crop Yield","Crop Price Prediction","Farm Schemes Recommendation System","Discussion Forum","Organic Farming Queries"])
 
 # Home Page
 if app_mode == "Home" :
@@ -267,10 +278,17 @@ elif(app_mode=="Weather"):
 
 elif(app_mode == 'Crop Yield'):
     st.title('Crop Recommendation and Yield Prediction System')
+    
+    with open('ricrop.json', 'r') as file:
+        advice = json.load(file)
+        
 
     st.header('Input Parameters')
+    st.write("1 ==> sandy soil, 2 ==> loamy soil, 3 ==> clay soil")
     soil_type = st.number_input("Enter the soil type (1, 2, 3):", min_value=1, max_value=3, step=1)
+    st.write("1 ==> aride, 2 ==> temperate, 3 ==> tropical")
     climate = st.number_input("Enter the climate type (1, 2, 3):", min_value=1, max_value=3, step=1)
+    st.write("1 ==> northern, 2 ==> southern")
     region = st.number_input("Enter the region (1, 2):", min_value=1, max_value=2, step=1)
     fertilizer_used = st.number_input("Enter if fertilizer is used (1 for yes, 0 for no):", min_value=0, max_value=1, step=1)
     irrigation = st.number_input("Enter if irrigation is used (1 for yes, 0 for no):", min_value=0, max_value=1, step=1)
@@ -283,6 +301,10 @@ elif(app_mode == 'Crop Yield'):
     if st.button('Recommend Crop'):
         recommended_crop = recommend_crop(soil_type, climate, region, soil_pH, avg_temp, rainfall, market_demand)
         st.success(f"Recommended Crop based on your inputs: {recommended_crop}")
+        st.success(f"Crop Description: {advice[recommended_crop]['Description']}")
+        st.success(f"Optimal Conditions: {advice[recommended_crop]['Optimal Conditions']}")
+        st.success(f"Cultivation Practices: {advice[recommended_crop]['Cultivation Practices']}")
+        st.success(f"Benefits: {advice[recommended_crop]['Benefits']}")
 
     if st.button('Predict Yield'):
         predicted_yield = predict_yield(soil_type, climate, fertilizer_used, irrigation, soil_pH, avg_temp, rainfall, market_demand)
@@ -349,78 +371,132 @@ elif(app_mode == 'Crop Price Prediction'):
 
 elif(app_mode == 'Farm Schemes Recommendation System'):
     
-    nlp = spacy.load('en_core_web_md')
-    def load_schemes(file_path):
-        with open(file_path, 'r') as file:
-            return json.load(file)
+    
+    with open('schemes.json', 'r') as file:
+        schemes = json.load(file)
+        
         
     def is_problem_matching(user_problem, target_problems):
-        user_doc = nlp(user_problem.lower())
-        for problem in target_problems:
-            target_doc = nlp(problem.lower())
-            similarity_score = user_doc.similarity(target_doc)
-            if similarity_score > 0.90:  # Increase threshold to be more selective
-                return True
-        return False
-    
+        vectorizer = TfidfVectorizer().fit_transform([user_problem.lower()] + [p.lower() for p in target_problems])
+        similarity_matrix = cosine_similarity(vectorizer[0:1], vectorizer[1:])
+        max_similarity_score = similarity_matrix.max() if len(similarity_matrix) > 0 else 0
+        return max_similarity_score > 0.85  # Threshold can be adjusted for selectivity
+
+# Function to recommend schemes based on farmer details
     def recommend_schemes(farmer_details, schemes):
         recommendations = []
         for scheme in schemes:
-            if (farmer_details['crop'].lower() in map(str.lower, scheme['target_crops']) and
-                any(is_problem_matching(problem, scheme['target_problems']) 
-                    for problem in farmer_details['problems'].split(','))):
+            if(farmer_details['crop'].lower() in map(str.lower, scheme['target_crops'])) and any(is_problem_matching(problem, scheme['target_problems']) for problem in farmer_details['problems'].split(',')):
                 recommendations.append(scheme)
-            return recommendations
-        
-    
+        return recommendations
+
+# Main function for the Streamlit app
     def main():
         st.title('Farm Schemes Recommendation System')
 
-    # Load schemes from JSON file
-        schemes = load_schemes('schemes.json')
-
-    # Input fields for user
         st.header('Enter Your Farm Details')
         crop = st.text_input("Enter the crop you want to grow (type 'null' for no crops):").strip()
-        problems = st.text_area("Enter the problems you are facing (separate multiple problems by commas):").strip()
+        problems = st.selectbox("Select your problem:", ["", "Need financial support",
+      "Lack of funds",
+      "Difficulty in accessing loans","Difficulty in selling crops at profitable prices",
+      "Market price fluctuations","Losses due to drought",
+      "Flood damage to crops",
+      "Crops destroyed by hailstorm",
+      "Damage from heavy rains",
+      "Losses caused by cyclones",
+      "Crops affected by pests",
+      "Disease outbreaks in crops","Lack of proper irrigation system",
+      "High water wastage in farming",
+      "Difficulty managing water supply",
+      "Need for efficient water use",
+      "Struggling with water scarcity",
+      "High costs of irrigation",
+      "Expensive farming inputs",
+      "Need to reduce production costs","Unsure about soil quality",
+      "Need to test soil nutrients",
+      "Don’t know soil pH level",
+      "Difficulty in understanding soil content",
+      "Uncertain about soil fertility","Not getting fair prices for my crops",
+      "Selling crops at low prices",
+      "Struggling with low market rates",
+      "Need better prices for my produce",
+      "Facing price exploitation from middlemen",
+      "Difficulty selling pulses/oilseeds","Don’t know how to start organic farming",
+      "Need guidance on organic farming methods",
+      "Lack of knowledge about sustainable practices",
+      "Unfamiliar with organic pest control",
+      "Organic inputs are too expensive",
+      "High cost of organic fertilizers","Lack of funds to buy farming inputs",
+      "Need financial support for crop cultivation",
+      "Struggling with high costs of seeds and fertilizers",
+      "Insufficient money for pesticides and other inputs",
+      "Low savings impacting farming activities",
+      "Crops not yielding expected output","Low fish production per hectare",
+      "Struggling to increase fish yield",
+      "Unable to reach desired fish production levels",
+      "Need help to enhance fish farm productivity",
+      "Low demand for fish locally",
+      "Struggling to sell fish at good prices",
+      "Need to increase domestic sales of fish","Need performance testing for my farm machinery",
+      "Struggling with unreliable farm equipment",
+      "Want information on testing machinery performance",
+      "Facing issues with machinery efficiency",
+      "Need training on using farm machinery",
+      "No knowledge of modern farming equipment","Struggling to access broader markets for my produce",
+      "Limited to local markets, need access to national platforms",
+      "Difficulty in trading agricultural commodities across regions",
+      "Need help integrating with online market platforms",
+      "Complicated market procedures affecting sales",
+      "Inconsistent transaction processes between markets","Difficulty accessing timely credit support",
+      "Need simplified procedures for obtaining loans",
+      "Struggling with complex credit application processes",
+      "Lack of adequate credit facilities for farming",
+      "Need short-term loans for crop cultivation",
+      "Struggling with financing for seasonal farming needs",
+      "Difficulty obtaining credit for planting crops","Insufficient public investment in agriculture",
+      "Need more funding and support from the state for agriculture",
+      "Struggling with inadequate government investment in farming",
+      "Lack of resources for agricultural development from the state",
+      "Need more local control over agricultural planning",
+      "Difficulty with rigid state plans that don’t fit local needs","Difficulty finding low-cost eco-friendly farming technologies",
+      "Need guidance on producing chemical-free agricultural products",
+      "Struggling with adopting technologies to reduce pesticide residues",
+      "Lack of knowledge about eco-friendly farming practices",
+      "Challenges with maintaining soil fertility naturally",
+      "Need help with conserving natural resources on the farm","Struggling to increase milk production sustainably",
+      "Need advanced technologies to improve bovine productivity",
+      "Facing challenges with low milk yield from cattle",
+      "Lack of effective methods to boost milk production",
+      "Difficulty accessing high genetic merit bulls for breeding","Struggling with high diesel costs for irrigation and farm operations",
+      "Need support to transition from diesel to solar power",
+      "Facing financial challenges in reducing diesel dependency",
+      "Lack of resources to adopt alternative energy sources for farming"]).strip()
         location = st.text_input("Enter your location:").strip()
         farm_size = st.selectbox("Is your farm size greater than 2 hectares?", ['yes', 'no']).strip().lower()
 
-    # Button to get recommendations
         if st.button('Get Recommendations'):
             farmer_details = {
-            'crop': crop,
-            'problems': problems,
-            'location': location,
-            'farm_size': farm_size
+                'crop': crop,
+                'problems': problems,
+                'location': location,
+                'farm_size': farm_size
         }
+            
+            
 
             recommendations = recommend_schemes(farmer_details, schemes)
 
             if recommendations:
                 st.header('Recommended Schemes')
                 for rec in recommendations:
-                    rec_farm_size = rec.get('farm_size', 'no')  # Default to 'no' if not found
-                    farmer_farm_size = farmer_details.get('farm_size', 'no')
-                
-                # Display schemes based on farm size criteria
-                    if farmer_details['crop'] == 'pulses' or farmer_details['crop'] == 'oilseeds' or farmer_details['crop'] == 'copra':
-                        value = schemes.get("PM-AASHA", 'Key not found')
-                        st.subheader(f"Scheme Name: {value['scheme_name']}")
-                        st.write(f"Objectives: {value.get('objectives', 'N/A')}")
-                        if 'benefits' in value:
-                            st.write(f"Benefits: {value['benefits']}")
-                        st.write(f"Eligibility Criteria: {value.get('eligibility_criteria', 'N/A')}")
-                        st.write(f"Source: {value['source']}")
-                        st.write('---')
+                    st.subheader(f"Scheme Name: {rec['scheme_name']}")
+                    st.write(f"Objectives: {rec.get('objectives', 'N/A')}")
+                    st.write(f"Source: {rec['source']}")
+                    st.write(f"Eligibility Criteria: {rec.get('eligibility_criteria', 'N/A')}")
                         
-                    if farmer_farm_size == 'yes' or (farmer_farm_size == 'no' and rec_farm_size == 'no'):
-                        st.subheader(f"Scheme Name: {rec['scheme_name']}")
-                        st.write(f"Objectives: {rec.get('objectives', 'N/A')}")
-                        if 'benefits' in rec:
-                            st.write(f"Benefits: {rec['benefits']}")
-                        st.write(f"Eligibility Criteria: {rec.get('eligibility_criteria', 'N/A')}")
-                        st.write(f"Source: {rec['source']}")
+                    if 'benefits' in rec:
+                        st.write(f"Benefits: {rec['benefits']}")
+                        
                         st.write('---')
             else:
                 st.write("No matching schemes found.")
@@ -428,3 +504,104 @@ elif(app_mode == 'Farm Schemes Recommendation System'):
     if __name__ == "__main__":
         main()
     
+elif(app_mode == "Discussion Forum"):
+    
+    API_URL = 'https://discussion-forum-bg8k6yqpp-atishays-projects-461ba0b9.vercel.app'
+
+    def fetch_posts():
+        response = requests.get(f"{API_URL}/")
+        if response.status_code == 200:
+            return response.json()
+        else:
+            st.error("Failed to fetch posts.")
+            return []
+
+    def create_post(title, content):
+         response = requests.post(f"{API_URL}/create", data={'title': title, 'content': content})
+         return response.status_code == 200
+
+    st.title("Discussion Forum")
+
+    st.header("Create a New Post")
+    title = st.text_input("Title")
+    content = st.text_area("Content")
+
+    if st.button("Post"):
+        if create_post(title, content):
+            st.success("Post created successfully!")
+        else:
+            st.error("Failed to create post.")
+
+    st.header("Forum Posts")
+    posts = fetch_posts()
+    for post in posts:
+        st.subheader(post['title'])
+        st.write(post['content'])
+        st.caption(post['createdAt'])
+        
+
+elif(app_mode == 'Organic Farming Queries'):
+    
+    
+    with open('OF.json', 'r') as file:
+        qa = json.load(file)
+
+# Function to check if a user's question matches any of the questions in the JSON
+    def is_question_matching(user_question, target_questions):
+        vectorizer = TfidfVectorizer().fit_transform([user_question.lower()] + [q.lower() for q in target_questions])
+        similarity_matrix = cosine_similarity(vectorizer[0:1], vectorizer[1:])
+        max_similarity_score = similarity_matrix.max() if similarity_matrix.size > 0 else 0
+        return max_similarity_score > 0.85  # Threshold for similarity
+
+# Function to recommend answers based on the user's selected query
+    def recommend_schemes(user_query, qa):
+        recommendations = []
+        for item in qa:
+            if is_question_matching(user_query, [item['question']]):
+                 recommendations.append(item)
+        return recommendations
+
+# Main function for the Streamlit app
+    def main():
+        st.title('Organic Farming Queries')
+        st.header('Ask any query related to organic farming')
+    
+        queries = st.selectbox(
+            "Select your query:",
+            [
+            "", "What is organic farming?", "What are the benefits of organic farming?",
+            "How does organic farming impact the environment?", "What types of crops can be grown organically?",
+            "Are organic products healthier than conventional ones?", "What are the key principles of organic farming?",
+            "How does organic farming differ from conventional farming?", "What certification is required for organic farming?",
+            "Can organic farming meet global food demands?", "What challenges do organic farmers face?",
+            "How do organic farmers control pests?", "Is organic farming more expensive than conventional farming?",
+            "What role does compost play in organic farming?", "What are organic fertilizers?",
+            "How can consumers identify organic products?", "What are the soil management practices in organic farming?",
+            "How does organic farming contribute to biodiversity?", "What is crop rotation in organic farming?",
+            "What are organic pest control methods?", "What is the importance of water management in organic farming?",
+            "What are the nutritional differences between organic and non-organic foods?", "How does organic farming impact carbon emissions?",
+            "What is green manure, and why is it used in organic farming?", "How does organic farming support animal welfare?",
+            "What role does crop diversity play in organic farming?"
+        ]
+    )
+    
+        if st.button('Get Answers'):
+            user_query = queries
+        
+        # Recommend schemes based on user query
+            recommendations = recommend_schemes(user_query, qa)
+
+            if recommendations:
+                st.header('Your solution to the problem')
+                for rec in recommendations:
+                    st.write(f"Answer: {rec.get('answer', 'N/A')}")
+                    st.write('---')
+            else:
+                st.write("No matching solution found.")
+
+    if __name__ == "__main__":
+        main()
+            
+            
+
+                                            
